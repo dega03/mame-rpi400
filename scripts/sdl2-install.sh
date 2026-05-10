@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# This script build the latest SDL2 version without X11 dependency.
+
+function sdl2-2.32.10 {
+  CHECKURL=https://github.com/libsdl-org/SDL/releases/tag/release-2.32.10
+  HTMLTAG='<title>Release '
+
+  LATESTSDL2VER=$(wget -q -O - $CHECKURL | grep "$HTMLTAG" | awk '{print $2}')
+
+  if [ -z $LATESTSDL2VER ]; then echo ERROR; exit; fi   # We make sure wget was successful
+
+  echo $LATESTSDL2VER
+  }
+
+function sdl2-2.24.0 {
+  CHECKURL=https://github.com/libsdl-org/SDL_ttf/releases/tag/release-2.24.0
+  HTMLTAG='<title>Release '
+
+  LATESTSDL2TTFVER=$(wget -q -O - $CHECKURL | grep "$HTMLTAG" | awk '{print $2}')
+
+  if [ -z $LATESTSDL2TTFVER ]; then echo ERROR; exit; fi   # We make sure wget was successful
+
+  echo $LATESTSDL2TTFVER
+  }
+
+VERSION=$(sdl2-2.32.10)
+TTFVERSION=$(sdl2-2.24.0)
+
+if [ "$(sdl2-config --version)" == "$VERSION" ]; then
+  echo SDL2 is already at the latest version \($VERSION\).
+  exit
+else
+  if [ "${1,,}" != "nodep" ]; then
+    echo Installing SDL2 dependencies...
+    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev -y
+    echo OpenGL ES 2 dependencies...
+    sudo apt-get install libgles2-mesa-dev -y
+  fi
+  echo Build dependencies...
+  sudo apt-get install build-essential -y
+  cd ~
+  echo Buiding SDL2 $VERSION...
+  # Based from "Compile SDL2 from source"
+  # https://github.com/midwan/amiberry/wiki/Compile-SDL2-from-source
+  wget https://libsdl.org/release/SDL2-${VERSION}.zip
+  unzip SDL2-${VERSION}.zip
+  rm SDL2-${VERSION}.zip
+  cd SDL2-${VERSION}
+  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
+
+  [ $(uname -m) == "armv7l" ] && make -j $(nproc) CFLAGS='-mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard'
+  [ $(uname -m) == "aarch64" ] && make -j $(nproc) CFLAGS='-mcpu=cortex-a72'
+
+  sudo make install
+
+  # SDL2_ttf
+  wget https://libsdl.org/projects/SDL_ttf/release/SDL2_ttf-${TTFVERSION}.tar.gz
+  tar zxvf SDL2_ttf-${TTFVERSION}.tar.gz
+  rm SDL2_ttf-${TTFVERSION}.tar.gz
+  cd SDL2_ttf-${TTFVERSION}
+  ./configure
+  make -j $(nproc)
+  sudo make install
+  sudo ldconfig -v
+
+  cd ~
+  sudo rm -R SDL2-${VERSION}
+  sudo rm -R SDL2_ttf-${TTFVERSION}
+  sudo apt-get remove build-essential -y
+fi
