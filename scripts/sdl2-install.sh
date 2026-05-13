@@ -2,8 +2,8 @@
 
 # This script build the latest SDL2 version without X11 dependency.
 
-function sdl2-2.32.10 {
-  CHECKURL=https://github.com/libsdl-org/SDL/releases/tag/release-2.32.10
+function sdl2-latest {
+  CHECKURL=https://github.com/libsdl-org/SDL/releases/latest
   HTMLTAG='<title>Release '
 
   LATESTSDL2VER=$(wget -q -O - $CHECKURL | grep "$HTMLTAG" | awk '{print $2}')
@@ -13,8 +13,8 @@ function sdl2-2.32.10 {
   echo $LATESTSDL2VER
   }
 
-function sdl2-2.24.0 {
-  CHECKURL=https://github.com/libsdl-org/SDL_ttf/releases/tag/release-2.24.0
+function sdl2-ttf-latest {
+  CHECKURL=https://github.com/libsdl-org/SDL_ttf/releases/latest
   HTMLTAG='<title>Release '
 
   LATESTSDL2TTFVER=$(wget -q -O - $CHECKURL | grep "$HTMLTAG" | awk '{print $2}')
@@ -24,8 +24,11 @@ function sdl2-2.24.0 {
   echo $LATESTSDL2TTFVER
   }
 
-VERSION=$(sdl2-2.32.10)
-TTFVERSION=$(sdl2-2.24.0)
+#VERSION=$(sdl2-latest)
+#TTFVERSION=$(sdl2-ttf-latest)
+
+VERSION="2.32.10"
+TTFVERSION="2.24.0"
 
 if [ "$(sdl2-config --version)" == "$VERSION" ]; then
   echo SDL2 is already at the latest version \($VERSION\).
@@ -33,7 +36,7 @@ if [ "$(sdl2-config --version)" == "$VERSION" ]; then
 else
   if [ "${1,,}" != "nodep" ]; then
     echo Installing SDL2 dependencies...
-    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev -y
+    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libpulse-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev autoconf automake libtool pkg-config -y
     echo OpenGL ES 2 dependencies...
     sudo apt-get install libgles2-mesa-dev -y
   fi
@@ -47,7 +50,8 @@ else
   unzip SDL2-${VERSION}.zip
   rm SDL2-${VERSION}.zip
   cd SDL2-${VERSION}
-  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
+  ./autogen.sh
+  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --enable-pulseaudio --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
 
   [ $(uname -m) == "armv7l" ] && make -j $(nproc) CFLAGS='-mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard'
   [ $(uname -m) == "aarch64" ] && make -j $(nproc) CFLAGS='-mcpu=cortex-a72'
