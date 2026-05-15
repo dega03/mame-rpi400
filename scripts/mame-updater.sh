@@ -125,7 +125,7 @@ else
         BUILDSTART=$(date +%s)
         echo Build start time: $(date +"%T")
         echo -----------------------------------------------------------------------------------
-        echo Please wait until the build is completed \(about 10 hours\)...
+        echo Please wait until the build is completed \(about 11 hours\)...
         echo -----------------------------------------------------------------------------------
         [ "$(uname -m)" == "armv7l" ]  && make -j$MAXTHREAD ARCHOPTS="$ARCHOPTS32" $MAKEOPTS PLATFORM=arm
         [ "$(uname -m)" == "aarch64" ] && make -j$MAXTHREAD ARCHOPTS="$ARCHOPTS64" $MAKEOPTS PLATFORM=arm64 PTR64=1
