@@ -35,7 +35,7 @@ then you can run them one by one:
 
     sudo ./scripts/resize_root.sh
     ./scripts/sdl2-install.sh
-    ./scripts/mame-updater.sh
+    ./scripts/mame-updater.sh latest
    
 
 I've slightly changed the script to instlall SDL2 because the original would download SDL3 which is not supported.  
