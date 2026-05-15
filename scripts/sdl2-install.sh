@@ -36,7 +36,7 @@ if [ "$(sdl2-config --version)" == "$VERSION" ]; then
 else
   if [ "${1,,}" != "nodep" ]; then
     echo Installing SDL2 dependencies...
-    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libpulse-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev autoconf automake libtool pkg-config -y
+    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libpulse-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev autoconf automake libtool pkg-config pulseaudio pulseaudio-utils -y
     echo OpenGL ES 2 dependencies...
     sudo apt-get install libgles2-mesa-dev -y
   fi
@@ -70,6 +70,19 @@ else
 
   cd ~
   sudo rm -R SDL2-${VERSION}
-  sudo rm -R SDL2_ttf-${TTFVERSION}
+  # sudo rm -R SDL2_ttf-${TTFVERSION}  # No need, it's inside the SDL2 folder just deleted
   sudo apt-get remove build-essential -y
+  
+  # Preparing to set SDL2 default audio driver settings
+  LINE='SDL_AUDIODRIVER=pulseaudio'
+  FILE='/etc/environment'
+  # Check for default SDL2 audio driver, and set it not present
+  if grep -qxF "$LINE" "$FILE"; then
+    echo "Entry '$LINE' already present in $FILE"
+  else
+    # Setting variable for this session and saving it in environment setting
+    SDL_AUDIODRIVER=pulseaudio
+    sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
+    echo "Added: $LINE"
+  fi
 fi

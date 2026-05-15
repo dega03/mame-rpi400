@@ -225,7 +225,7 @@ else
             echo Removing dependencies...
             # Removing swap...
             sudo systemctl stop dphys-swapfile.service
-            sudo rm /var/swap
+            # sudo rm /var/swap   # Commented because it fails
             sudo apt-get remove dphys-swapfile build-essential -y
             sudo apt-get autoremove -y
         else
