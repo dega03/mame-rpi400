@@ -29,13 +29,13 @@ Then you can download my sript folder (will be easier fro a ssh terminal, so you
     wget https://raw.githubusercontent.com/dega03/mame-rpi400/refs/heads/main/scripts/sdl2-install.sh
     wget https://raw.githubusercontent.com/dega03/mame-rpi400/refs/heads/main/scripts/mame-updater.sh
     chmod +x *
-    cd..
+    cd ..
 
 then you can run them one by one:
 
-    ./scriots/resize_root.sh
-    ./scriots/sdl2-install.sh
-    ./scriots/mame-updater.sh
+    sudo ./scripts/resize_root.sh
+    ./scripts/sdl2-install.sh
+    ./scripts/mame-updater.sh
    
 
 I've slightly changed the script to instlall SDL2 because the original would download SDL3 which is not supported.  
