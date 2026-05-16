@@ -51,7 +51,7 @@ else
   rm SDL2-${VERSION}.zip
   cd SDL2-${VERSION}
   ./autogen.sh
-  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-pulseaudio --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --enable-pulseaudio --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
+  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --enable-pulseaudio --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
 
   [ $(uname -m) == "armv7l" ] && make -j $(nproc) CFLAGS='-mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard'
   [ $(uname -m) == "aarch64" ] && make -j $(nproc) CFLAGS='-mcpu=cortex-a72'
