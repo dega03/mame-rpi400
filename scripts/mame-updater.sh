@@ -187,7 +187,7 @@ else
                   -video accel \
                   -videodriver kmsdrm \
                   -renderdriver opengles2 \
-                  -audiodriver alsa \
+                  -audiodriver pulseaudio \
                   -samplerate 22050 \
                   -createconfig
             fi
