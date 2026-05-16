@@ -36,7 +36,7 @@ if [ "$(sdl2-config --version)" == "$VERSION" ]; then
 else
   if [ "${1,,}" != "nodep" ]; then
     echo Installing SDL2 dependencies...
-    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libpulse-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev autoconf automake libtool pkg-config pulseaudio pulseaudio-utils -y
+    sudo apt-get install libfreetype6-dev libdrm-dev libgbm-dev libudev-dev libdbus-1-dev libpulse-dev libasound2-dev liblzma-dev libjpeg-dev libtiff-dev libwebp-dev autoconf automake libtool pkg-config pulseaudio pulseaudio-utils libpulse0 -y
     echo OpenGL ES 2 dependencies...
     sudo apt-get install libgles2-mesa-dev -y
   fi
@@ -51,7 +51,7 @@ else
   rm SDL2-${VERSION}.zip
   cd SDL2-${VERSION}
   ./autogen.sh
-  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --enable-pulseaudio --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
+  ./configure --disable-video-opengl --disable-video-opengles1 --disable-video-x11 --disable-esd --disable-video-wayland --disable-video-rpi --disable-video-vulkan --enable-video-kmsdrm --enable-video-opengles2 --enable-alsa --enable-pulseaudio --disable-pulseaudio-shared --disable-joystick-virtual --enable-arm-neon --enable-arm-simd
 
   [ $(uname -m) == "armv7l" ] && make -j $(nproc) CFLAGS='-mtune=cortex-a72 -mfpu=neon-fp-armv8 -mfloat-abi=hard'
   [ $(uname -m) == "aarch64" ] && make -j $(nproc) CFLAGS='-mcpu=cortex-a72'

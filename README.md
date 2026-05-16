@@ -16,6 +16,7 @@ Then log-in and run
   
     sudo raspi-config
       -> System Options -> Hostname -> mame (or anything you'd like)
+                           Auto Login -> Yes (to make life easier)
       -> Interface Options -> SSH -> Yes (to enable it)
       -> Update
     -> Finish
